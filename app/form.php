@@ -147,7 +147,7 @@
                 // );
                 
                 // $db->query($sql);
-
+                
                 // Second approach ... prepared statemetns
                 $stmt = $db->prepare(
                     "INSERT INTO Elevators (Name, LocationName, OneWayMiles, EstimatedTruckingToLocationOneWay)
