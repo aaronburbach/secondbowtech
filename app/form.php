@@ -12,6 +12,7 @@
     $cornSpotBasis = '';
     $soybeanSpotPrice = '';
     $soybeanSpotBasis = '';
+    $print = false;
 
     if (isset($_POST['submit'])) {
         // Assume form has been filled out properly.
@@ -99,32 +100,66 @@
         //  echo('$ok = ' . ($ok ? 'true' : 'false'));
 
         if ($ok) {
-            printf('Date: %s
-                <br>Front Month Corn Contract Month: %s
-                <br>Front Month Corn Contract Price: %s
-                <br>Front Month Soybean Contract Month: %s
-                <br>Front Month Soybean Contract Price: %s
-                <br>Elevator/Co-op Name: %s
-                <br>Elevator/Co-op Location: %s
-                <br>One-way Mileage: %s
-                <br>Estimated Trucking: %s
-                <br>Corn Spot Price: %s
-                <br>Corn Spot Basis: %s
-                <br>Soybean Spot Price: %s
-                <br>Soybean Spot Basis: %s',
-                htmlspecialchars($date, ENT_QUOTES),
-                htmlspecialchars($cornContractMonth, ENT_QUOTES),
-                htmlspecialchars($cornPrice, ENT_QUOTES),
-                htmlspecialchars($soybeanContractMonth, ENT_QUOTES),
-                htmlspecialchars($soybeanPrice, ENT_QUOTES),
-                htmlspecialchars($elevatorName, ENT_QUOTES),
-                htmlspecialchars($elevatorLocation, ENT_QUOTES),
-                htmlspecialchars($elevatorOneWayMileage, ENT_QUOTES),
-                htmlspecialchars($estimatedTruckingToLocation, ENT_QUOTES),
-                htmlspecialchars($cornSpotPrice, ENT_QUOTES),
-                htmlspecialchars($cornSpotBasis, ENT_QUOTES),
-                htmlspecialchars($soybeanSpotPrice, ENT_QUOTES),
-                htmlspecialchars($soybeanSpotBasis, ENT_QUOTES));
+            if ($print) {
+                printf('Date: %s
+                    <br>Front Month Corn Contract Month: %s
+                    <br>Front Month Corn Contract Price: %s
+                    <br>Front Month Soybean Contract Month: %s
+                    <br>Front Month Soybean Contract Price: %s
+                    <br>Elevator/Co-op Name: %s
+                    <br>Elevator/Co-op Location: %s
+                    <br>One-way Mileage: %s
+                    <br>Estimated Trucking: %s
+                    <br>Corn Spot Price: %s
+                    <br>Corn Spot Basis: %s
+                    <br>Soybean Spot Price: %s
+                    <br>Soybean Spot Basis: %s',
+                    htmlspecialchars($date, ENT_QUOTES),
+                    htmlspecialchars($cornContractMonth, ENT_QUOTES),
+                    htmlspecialchars($cornPrice, ENT_QUOTES),
+                    htmlspecialchars($soybeanContractMonth, ENT_QUOTES),
+                    htmlspecialchars($soybeanPrice, ENT_QUOTES),
+                    htmlspecialchars($elevatorName, ENT_QUOTES),
+                    htmlspecialchars($elevatorLocation, ENT_QUOTES),
+                    htmlspecialchars($elevatorOneWayMileage, ENT_QUOTES),
+                    htmlspecialchars($estimatedTruckingToLocation, ENT_QUOTES),
+                    htmlspecialchars($cornSpotPrice, ENT_QUOTES),
+                    htmlspecialchars($cornSpotBasis, ENT_QUOTES),
+                    htmlspecialchars($soybeanSpotPrice, ENT_QUOTES),
+                    htmlspecialchars($soybeanSpotBasis, ENT_QUOTES));
+            } else {
+                // Instantiate new DB connection...
+                $db = new mysqli(
+                    '', // dbServer .... if hosted, provide the server from the hosting provider
+                    '', // provide username
+                    '', // provide password
+                    '' // the name of the database to connect to
+                );
+
+                // // First approach ...
+                // $sql = sprintf(
+                //     "INSERT INTO Elevators (Name, LocationName, OneWayMiles, EstimatedTruckingToLocationOneWay)
+                //     VALUES ('%s', '%s', %s, %s)",
+                //     $db->real_escape_string($elevatorName),
+                //     $db->real_escape_string($elevatorLocation),
+                //     $db->real_escape_string($elevatorOneWayMileage),
+                //     $db->real_escape_string($estimatedTruckingToLocation)
+                // );
+                
+                // $db->query($sql);
+
+                // Second approach ... prepared statemetns
+                $stmt = $db->prepare(
+                    "INSERT INTO Elevators (Name, LocationName, OneWayMiles, EstimatedTruckingToLocationOneWay)
+                    VALUES (?, ?, ?, ?)"
+                );
+                $stmt->bind_param('ssid', $elevatorName, $elevatorLocation, $elevatorOneWayMileage, $estimatedTruckingToLocation);
+                $stmt->execute();
+    
+                echo '<p>New elevator added.</p>';
+
+                $db->close(); // Do not have to explicitly do this, b/c php will do this, but this is good practice.
+            }
         }
     }
 ?>
