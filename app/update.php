@@ -1,6 +1,8 @@
 <?php
     //update.php?id=2
 
+    require 'config.inc.php';
+
     if (isset($_GET['id']) && ctype_digit($_GET['id'])) {
         $id = $_GET['id'];
     } else {
@@ -58,10 +60,10 @@
             } else {
                 // Instantiate new DB connection...
                 $db = new mysqli(
-                    '', // dbServer .... if hosted, provide the server from the hosting provider
-                    '', // provide username
-                    '', // provide password
-                    '' // the name of the database to connect to
+                    MYSQL_HOST, // dbServer .... if hosted, provide the server from the hosting provider
+                    MYSQL_USER, // provide username
+                    MYSQL_PASSWORD, // provide password
+                    MYSQL_DATABASE // the name of the database to connect to
                 );
 
                 // First approach ...
@@ -93,10 +95,10 @@
     } else {
         // Instantiate new DB connection...
         $db = new mysqli(
-            '', // dbServer .... if hosted, provide the server from the hosting provider
-            '', // provide username
-            '', // provide password
-            '' // the name of the database to connect to
+            MYSQL_HOST, // dbServer .... if hosted, provide the server from the hosting provider
+            MYSQL_USER, // provide username
+            MYSQL_PASSWORD, // provide password
+            MYSQL_DATABASE // the name of the database to connect to
         );
 
         $sql = "SELECT Id, Name, LocationName, OneWayMiles, EstimatedTruckingToLocationOneWay From Elevators WHERE id=$id";

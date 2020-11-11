@@ -2,12 +2,14 @@
     <ul>
 <?php
 
+    require 'config.inc.php';
+
     // Instantiate new DB connection...
     $db = new mysqli(
-        '', // dbServer .... if hosted, provide the server from the hosting provider
-        '', // provide username
-        '', // provide password
-        '' // the name of the database to connect to
+        MYSQL_HOST, // dbServer .... if hosted, provide the server from the hosting provider
+        MYSQL_USER, // provide username
+        MYSQL_PASSWORD, // provide password
+        MYSQL_DATABASE // the name of the database to connect to
     );
 
     $sql = 'SELECT Id, Name, LocationName, OneWayMiles, EstimatedTruckingToLocationOneWay FROM Elevators';
