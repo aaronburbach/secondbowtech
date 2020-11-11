@@ -164,6 +164,7 @@
             }
         }
     }
+    readfile('header.tmpl.html');
 ?>
 
 <form action="" method="post">
@@ -242,3 +243,7 @@
     <hr />
     <hr />
 </form>
+
+<?php
+    readfile('footer.tmpl.html');
+?>

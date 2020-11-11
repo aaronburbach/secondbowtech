@@ -1,16 +1,9 @@
 <?php
+
     require 'config.inc.php';
 
-    //update.php?id=2
-    if (isset($_GET['id']) && ctype_digit($_GET['id'])) {
-        $id = $_GET['id'];
-    } else {
-        // redirect
-        header('Location: select.php');
-    }
-
     readfile('header.tmpl.html');
-    
+
     $elevatorName = '';
     $elevatorLocation = '';
     $elevatorOneWayMileage = '';
@@ -21,7 +14,6 @@
         // Assume form has been filled out properly.
         $ok = true;
 
-        // Check all fields to ensure they've been properly filled out.
         if (!isset($_POST['ElevatorName']) || $_POST['ElevatorName'] === ''){
             $ok = false;
         } else {
@@ -67,52 +59,33 @@
                     MYSQL_DATABASE // the name of the database to connect to
                 );
 
-                // First approach ...
-                $sql = sprintf(
-                    "UPDATE Elevators Set Name='%s', LocationName='%s', OneWayMiles=%s, EstimatedTruckingToLocationOneWay=%s
-                    WHERE id=%s",
-                    $db->real_escape_string($elevatorName),
-                    $db->real_escape_string($elevatorLocation),
-                    $db->real_escape_string($elevatorOneWayMileage),
-                    $db->real_escape_string($estimatedTruckingToLocation),
-                    $id
-                );
-                
-                $db->query($sql);
-                
-                // // Second approach ... prepared statemetns
-                // $stmt = $db->prepare(
+                // // First approach ...
+                // $sql = sprintf(
                 //     "INSERT INTO Elevators (Name, LocationName, OneWayMiles, EstimatedTruckingToLocationOneWay)
-                //     VALUES (?, ?, ?, ?)"
+                //     VALUES ('%s', '%s', %s, %s)",
+                //     $db->real_escape_string($elevatorName),
+                //     $db->real_escape_string($elevatorLocation),
+                //     $db->real_escape_string($elevatorOneWayMileage),
+                //     $db->real_escape_string($estimatedTruckingToLocation)
                 // );
-                // $stmt->bind_param('ssid', $elevatorName, $elevatorLocation, $elevatorOneWayMileage, $estimatedTruckingToLocation);
-                // $stmt->execute();
+                
+                // $db->query($sql);
+                
+                // Second approach ... prepared statemetns
+                $stmt = $db->prepare(
+                    "INSERT INTO Elevators (Name, LocationName, OneWayMiles, EstimatedTruckingToLocationOneWay)
+                    VALUES (?, ?, ?, ?)"
+                );
+                $stmt->bind_param('ssid', $elevatorName, $elevatorLocation, $elevatorOneWayMileage, $estimatedTruckingToLocation);
+                $stmt->execute();
     
-                //echo '<p>Elevator updated.</p>';
+                //echo '<p>New elevator added.</p>';
                 // redirect
                 header('Location: select.php');
 
                 $db->close(); // Do not have to explicitly do this, b/c php will do this, but this is good practice.
             }
         }
-    } else {
-        // Instantiate new DB connection...
-        $db = new mysqli(
-            MYSQL_HOST, // dbServer .... if hosted, provide the server from the hosting provider
-            MYSQL_USER, // provide username
-            MYSQL_PASSWORD, // provide password
-            MYSQL_DATABASE // the name of the database to connect to
-        );
-
-        $sql = "SELECT Id, Name, LocationName, OneWayMiles, EstimatedTruckingToLocationOneWay From Elevators WHERE id=$id";
-        $result = $db->query($sql);
-        foreach ($result as $row) {
-            $elevatorName = $row['Name'];
-            $elevatorLocation = $row['LocationName'];
-            $elevatorOneWayMileage = $row['OneWayMiles'];
-            $estimatedTruckingToLocation = $row['EstimatedTruckingToLocationOneWay'];
-        }
-        $db->close(); // Do not have to explicitly do this, b/c php will do this, but this is good practice.
     }
 ?>
 

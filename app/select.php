@@ -1,3 +1,6 @@
+<?php
+  readfile('header.tmpl.html');
+?>
 <div>
     <ul>
 <?php
@@ -35,7 +38,10 @@
     }
 
     $db->close();
-
 ?>
     </ul>
 </div>
+
+<?php
+    readfile('footer.tmpl.html');
+?>

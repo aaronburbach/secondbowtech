@@ -1,8 +1,9 @@
 <?php
-    //delete.php?id=2
-
     require 'config.inc.php';
+    
+    readfile('header.tmpl.html');
 
+    //delete.php?id=2
     if (isset($_GET['id']) && ctype_digit($_GET['id'])) {
         $id = $_GET['id'];
     } else {
@@ -23,4 +24,5 @@
     $db->query($sql);
     echo '<p>Elevator deleted.</p><br><p><span><a href="select.php">Back to List</a></span></p>';
     $db->close();
+    readfile('footer.tmpl.html');
 ?>
